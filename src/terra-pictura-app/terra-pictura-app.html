@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 
 <dom-module id="terra-pictura-app">
     <template>
@@ -7,24 +8,20 @@
             display: block;
         }
         </style>
+
         <h1>[[title]]</h1>
+        <paper-slider min="0" max="100" value="30" pin="true"></paper-slider>
     </template>
-
     <script>
-    class MyApplication extends Polymer.Element {
-        static get is() {
-            return 'terra-pictura-app';
-        }
-        static get properties() {
-            return {
-                title: {
-                    type: String,
-                    value: 'Terra Pictura'
-                }
-            };
-        }
-    }
+    Polymer({
+        is: 'terra-pictura-app',
 
-    window.customElements.define(MyApplication.is, MyApplication);
+        properties: {
+            title: {
+                type: String,
+                value: 'Terra Pictura'
+            }
+        }
+    });
     </script>
 </dom-module>
