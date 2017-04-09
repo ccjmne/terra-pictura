@@ -1,0 +1,30 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="terra-pictura-app">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        </style>
+        <h1>[[title]]</h1>
+    </template>
+
+    <script>
+    class MyApplication extends Polymer.Element {
+        static get is() {
+            return 'terra-pictura-app';
+        }
+        static get properties() {
+            return {
+                title: {
+                    type: String,
+                    value: 'Terra Pictura'
+                }
+            };
+        }
+    }
+
+    window.customElements.define(MyApplication.is, MyApplication);
+    </script>
+</dom-module>

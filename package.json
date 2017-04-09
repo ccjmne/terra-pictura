@@ -1,0 +1,25 @@
+{
+  "name": "terra-pictura",
+  "version": "0.0.1",
+  "description": "A cross-platform desktop application that maintains your wallpaper as a \"live\", customisable representation of the Earth.",
+  "homepage": "https://github.com/ccjmne/terra-pictura#readme",
+  "license": "MIT",
+  "author": {
+    "name": "ccjmne",
+    "email": "ccjmne@gmail.com",
+    "url": "https://github.com/ccjmne"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccjmne/terra-pictura.git"
+  },
+  "keywords": [
+    "Earth",
+    "Live",
+    "Wallpaper",
+    "3D",
+    "Terra",
+    "Pictura"
+  ],
+  "private": true
+}

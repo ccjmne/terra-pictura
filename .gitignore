@@ -1,0 +1,7 @@
+# Generated files/folders
+dist
+build
+
+# Dev directories
+bower_components
+node_modules
