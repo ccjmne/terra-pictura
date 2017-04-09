@@ -12,12 +12,64 @@
         <link rel="manifest" href="/manifest.json">
 
         <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+        <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+        <link rel="import" href="/bower_components/polymer/polymer.html">
+        <link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+        <link rel="import" href="/bower_components/font-roboto/roboto.html">
 
         <link rel="import" href="/src/terra-pictura-app/terra-pictura-app.html">
     </head>
 
-    <body>
-        <terra-pictura-app></terra-pictura-app>
+    <style is="custom-style" include="iron-flex iron-positioning">
+    :root {
+        --primary-text-color: var(--light-theme-text-color);
+        --primary-background-color: var(--light-theme-background-color);
+        --secondary-text-color: var(--light-theme-secondary-color);
+        --disabled-text-color: var(--light-theme-disabled-color);
+        --divider-color: var(--light-theme-divider-color);
+        --error-color: var(--paper-deep-orange-a700);
+        /*
+         * Primary and accent colours
+         */
+        --primary-color: var(--paper-brown-500);
+        --light-primary-color: var(--paper-brown-100);
+        --dark-primary-color: var(--paper-brown-700);
+        --accent-color: var(--paper-teal-a200);
+        --light-accent-color: var(--paper-teal-a100);
+        --dark-accent-color: var(--paper-teal-a400);
+        /*
+         * Light theme colours
+         */
+        --light-theme-background-color: #ffffff;
+        --light-theme-base-color: #000000;
+        --light-theme-text-color: var(--paper-grey-900);
+        --light-theme-secondary-color: #737373;
+        /* for secondary text and icons */
+        --light-theme-disabled-color: #9b9b9b;
+        /* disabled/hint text */
+        --light-theme-divider-color: #dbdbdb;
+        /*
+         *Dark theme colours
+         */
+        --dark-theme-background-color: var(--paper-grey-900);
+        --dark-theme-base-color: #ffffff;
+        --dark-theme-text-color: #ffffff;
+        --dark-theme-secondary-color: #bcbcbc;
+        /* for secondary text and icons */
+        --dark-theme-disabled-color: #646464;
+        /* disabled/hint text */
+        --dark-theme-divider-color: #3c3c3c;
+    }
+    
+    body {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+    }
+    </style>
+
+    <body class="fullbleed">
+        <terra-pictura-app class="fit"></terra-pictura-app>
     </body>
 
 </html>

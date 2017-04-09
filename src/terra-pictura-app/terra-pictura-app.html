@@ -1,16 +1,86 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 
 <dom-module id="terra-pictura-app">
     <template>
-        <style>
+        <style is="custom-style" include="iron-flex iron-flex-alignment iron-positioning">
         :host {
             display: block;
+            @apply --layout-vertical;
+            --paper-tabs-selection-bar-color: var(--light-primary-color);
+            --paper-tab-ink: white;
+            --paper-tabs: {
+                background-color: var(--primary-color);
+                color: white;
+            }
+            --paper-tabs-selection-bar: {
+                border-bottom-width: 4px;
+            }
+        }
+        
+        /deep/ paper-listbox paper-item:hover {
+            cursor: default;
+        }
+        
+        paper-material {
+            margin: 20px;
+            margin-top: 0;
+        }
+        
+        iron-pages#configuration-pages {
+            padding: 20px;
+        }
+        
+        .header-main {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
         }
         </style>
 
-        <h1>[[title]]</h1>
-        <paper-slider min="0" max="100" value="30" pin="true"></paper-slider>
+        <div class="header-main">
+            <h1>Terra Pictura</h1>
+        </div>
+        <div class="flex layout vertical center">
+            <paper-dropdown-menu-light label="Update frequency">
+                <paper-listbox class="dropdown-content" selected="30m" attr-for-selected="name">
+                    <template is="dom-repeat" items="[[_updateFrequencies]]">
+                        <paper-item name="[[item.value]]">[[item.title]]</paper-item>
+                    </template>
+                </paper-listbox>
+            </paper-dropdown-menu-light>
+
+            <paper-radio-group selected="different">
+                <template is="dom-repeat" items="[[_configurationTypes]]">
+                    <paper-radio-button name="[[item.value]]">[[item.title]]</paper-radio-button>
+                </template>
+            </paper-radio-group>
+
+            <paper-material class="flex self-stretch" elevation="1">
+                <paper-tabs selected="{{_display}}" attr-for-selected="name">
+                    <paper-tab name="primary">Primary display</paper-tab>
+                    <paper-tab name="secondary">Display 2</paper-tab>
+                    <paper-tab name="3rd">Display 3</paper-tab>
+                </paper-tabs>
+
+                <iron-pages id="configuration-pages" class="flex self-stretch" selected="[[_display]]" attr-for-selected="name">
+                    <div name="primary">Page 1</div>
+                    <div name="secondary">Page 2</div>
+                    <div name="3rd">Page 3</div>
+                </iron-pages>
+            </paper-material>
+        </div>
     </template>
     <script>
     Polymer({
@@ -20,6 +90,42 @@
             title: {
                 type: String,
                 value: 'Terra Pictura'
+            },
+
+            _display: {
+                type: String,
+                value: 'secondary'
+            },
+
+            _updateFrequencies: {
+                type: Array,
+                value: [{
+                    title: 'Every 5 minutes',
+                    value: '5m'
+                }, {
+                    title: 'Every 30 minutes',
+                    value: '30m'
+                }, {
+                    title: 'Every hour',
+                    value: '1h'
+                }, {
+                    title: 'Every day',
+                    value: '1d'
+                }]
+            },
+
+            _configurationTypes: {
+                type: Array,
+                value: [{
+                    title: 'Same for every display',
+                    value: 'same'
+                }, {
+                    title: 'Spanned across all displays',
+                    value: 'unique'
+                }, {
+                    title: 'Different for each display',
+                    value: 'different'
+                }]
             }
         }
     });
