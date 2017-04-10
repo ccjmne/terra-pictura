@@ -21,13 +21,13 @@
             }
         },
 
-        observers: ['_specsChanged(data.*)'],
+        observers: ['_dataChanged(data.*)'],
 
         toJSON: function(item) {
             return JSON.stringify(item, null, this.ugly ? '' : '\t');
         },
 
-        _specsChanged: function(data) {
+        _dataChanged: function(data) {
             this.$.pre.innerText = this.toJSON(data.base);
         }
     });

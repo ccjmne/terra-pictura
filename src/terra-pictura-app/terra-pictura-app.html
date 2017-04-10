@@ -12,6 +12,8 @@
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 
+<!-- TODO: remove -->
+<link rel="import" href="../utils/as-json.html">
 <link rel="import" href="../system-api/system-api.html">
 <link rel="import" href="../display-configuration/display-configuration.html">
 
@@ -32,9 +34,15 @@
             }
         }
         
-        paper-dropdown-menu,
-        paper-listbox {
+        paper-dropdown-menu {
             width: 250px;
+        }
+        
+        /deep/ iron-dropdown {
+            position: absolute !important;
+            left: 0 !important;
+            top: 8px !important;
+            width: 100%;
         }
         
         paper-material {
@@ -55,6 +63,14 @@
             background-color: var(--primary-color);
             color: white;
             text-align: center;
+        }
+        
+        #config {
+            /* TODO: remove */
+            background-color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
         }
         </style>
 
@@ -85,9 +101,11 @@
                         <paper-tab name="[[item.id]]">[[item.name]]</paper-tab>
                     </template>
                 </paper-tabs>
-                <iron-pages id="configuration-pages" class="flex self-stretch" selected="[[_display]]" attr-for-selected="name">
+                <!-- TODO: remove -->
+                <!-- <as-json data="[[config]]" id="config" ugly></as-json> -->
+                <iron-pages id="configuration-pages" selected="[[_display]]" attr-for-selected="name">
                     <template is="dom-repeat" items="[[_displays]]">
-                        <display-configuration name="[[item.id]]" display="[[item]]"></display-configuration>
+                        <display-configuration class="flex" name="[[item.id]]" display="[[item]]" global-config="{{config}}"></display-configuration>
                     </template>
                 </iron-pages>
             </paper-material>
@@ -102,8 +120,10 @@
             this._display = this.$.system.getPrimaryDisplay().id
             this.config = {
                 type: 'same',
-                frequency: '30m'
+                frequency: '30m',
+                displays: {}
             };
+            this._displays.forEach(display => this.set('config.displays.' + display.id, {}));
         },
 
         properties: {

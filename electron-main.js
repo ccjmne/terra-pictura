@@ -13,7 +13,8 @@ if (livereload) {
 };
 
 app.on('ready', function createWindow() {
-  mainWindow = new BrowserWindow({ width: 1200, height: 600, frame: false });
+  const { width, height } = require('electron').screen.getPrimaryDisplay().workAreaSize;
+  mainWindow = new BrowserWindow({ width: 1280, height: 800, frame: false });
 
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),

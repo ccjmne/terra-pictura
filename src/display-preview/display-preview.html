@@ -1,0 +1,46 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- TODO: remove -->
+<link rel="import" href="../utils/as-json.html">
+
+<dom-module id="display-preview">
+    <template>
+        <style>
+        :host {
+            display: block;
+            background-color: grey;
+        }
+        
+        :host::after {
+            content: '';
+            display: block;
+            padding-top: var(--aspect-ratio);
+        }
+        </style>
+    </template>
+    <script>
+    Polymer({
+        is: 'display-preview',
+
+        properties: {
+            width: {
+                type: Number
+            },
+            height: {
+                type: Number
+            },
+            config: {
+                type: Object
+            }
+        },
+
+        observers: ['_aspectRatioChanged(width, height)'],
+
+        _aspectRatioChanged: function(width, height) {
+            console.log('oy')
+            this.customStyle['--aspect-ratio'] = this.height / this.width * 100 + '%';
+            console.log(this.customStyle['--aspect-ratio'])
+        }
+    });
+    </script>
+</dom-module>
