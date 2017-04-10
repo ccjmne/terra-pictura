@@ -37,6 +37,10 @@
             width: 250px;
         }
         
+        paper-tabs {
+            min-height: 48px;
+        }
+        
         /deep/ iron-dropdown {
             position: absolute !important;
             left: 0 !important;
@@ -44,8 +48,12 @@
             width: 100%;
         }
         
-        iron-pages#configuration-pages {
-            padding: 20px;
+        /deep/ paper-item {
+            white-space: nowrap;
+        }
+        
+        /deep/ .dropdown-content {
+            overflow-x: hidden;
         }
         
         .header-main {
@@ -84,20 +92,18 @@
                 </template>
             </paper-radio-group>
 
-            <div class="flex self-stretch">
-                <paper-tabs selected="{{_display}}" attr-for-selected="name">
-                    <template is="dom-repeat" items="[[_displays]]">
-                        <paper-tab name="[[item.id]]">[[item.name]]</paper-tab>
-                    </template>
-                </paper-tabs>
-                <!-- TODO: remove -->
-                <!-- <as-json data="[[config]]" id="config" ugly></as-json> -->
-                <iron-pages id="configuration-pages" selected="[[_display]]" attr-for-selected="name">
-                    <template is="dom-repeat" items="[[_displays]]">
-                        <display-configuration class="flex" name="[[item.id]]" display="[[item]]" global-config="{{config}}"></display-configuration>
-                    </template>
-                </iron-pages>
-            </div>
+            <paper-tabs class="self-stretch" selected="{{_display}}" attr-for-selected="name">
+                <template is="dom-repeat" items="[[_displays]]">
+                    <paper-tab name="[[item.id]]">[[item.name]]</paper-tab>
+                </template>
+            </paper-tabs>
+            <!-- TODO: remove -->
+            <!-- <as-json data="[[config]]" id="config" ugly></as-json> -->
+            <iron-pages class="flex self-stretch" selected="[[_display]]" attr-for-selected="name">
+                <template is="dom-repeat" items="[[_displays]]">
+                    <display-configuration name="[[item.id]]" display="[[item]]" global-config="{{config}}"></display-configuration>
+                </template>
+            </iron-pages>
         </div>
     </template>
     <script>

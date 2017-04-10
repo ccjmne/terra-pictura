@@ -2,7 +2,8 @@
   "name": "terra-pictura-polymer",
   "main": "index.html",
   "dependencies": {
-    "paper-elements": "PolymerElements/paper-elements#^1.0.7"
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "vaadin-split-layout": "^1.1.0"
   },
   "devDependencies": {
     "web-component-tester": "v6.0.0-prerelease.5",
