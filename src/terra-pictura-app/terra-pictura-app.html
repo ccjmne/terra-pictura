@@ -13,6 +13,7 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 
 <link rel="import" href="../system-api/system-api.html">
+<link rel="import" href="../display-configuration/display-configuration.html">
 
 <dom-module id="terra-pictura-app">
     <template>
@@ -86,7 +87,7 @@
                 </paper-tabs>
                 <iron-pages id="configuration-pages" class="flex self-stretch" selected="[[_display]]" attr-for-selected="name">
                     <template is="dom-repeat" items="[[_displays]]">
-                        <div name="[[item.id]]">[[__toJSON(item)]]</div>
+                        <display-configuration name="[[item.id]]" display="[[item]]"></display-configuration>
                     </template>
                 </iron-pages>
             </paper-material>
@@ -95,10 +96,6 @@
     <script>
     Polymer({
         is: 'terra-pictura-app',
-
-        __toJSON: function(item) {
-            return JSON.stringify(item);
-        },
 
         ready: function() {
             this._displays = this.$.system.getDisplays();
