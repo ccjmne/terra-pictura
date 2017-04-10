@@ -7,7 +7,6 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
@@ -43,16 +42,6 @@
             left: 0 !important;
             top: 8px !important;
             width: 100%;
-        }
-        
-        paper-material {
-            margin: 20px;
-            margin-top: 0;
-        }
-        
-        paper-material > paper-tabs {
-            border-top-left-radius: 2px;
-            border-top-right-radius: 2px;
         }
         
         iron-pages#configuration-pages {
@@ -95,7 +84,7 @@
                 </template>
             </paper-radio-group>
 
-            <paper-material class="flex self-stretch" elevation="1">
+            <div class="flex self-stretch">
                 <paper-tabs selected="{{_display}}" attr-for-selected="name">
                     <template is="dom-repeat" items="[[_displays]]">
                         <paper-tab name="[[item.id]]">[[item.name]]</paper-tab>
@@ -108,7 +97,7 @@
                         <display-configuration class="flex" name="[[item.id]]" display="[[item]]" global-config="{{config}}"></display-configuration>
                     </template>
                 </iron-pages>
-            </paper-material>
+            </div>
         </div>
     </template>
     <script>

@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 
 <link rel="import" href="../display-preview/display-preview.html">
@@ -28,14 +29,6 @@
         
         :host > div + div {
             margin-left: 20px;
-        }
-        
-        .left-panel {
-            background-color: grey;
-        }
-        
-        .right-panel {
-            padding: 0 20px 0 20px;
         }
         
         paper-material {
@@ -65,6 +58,7 @@
             padding-top: 3px;
         }
         </style>
+
         <div class="flex-2 layout vertical">
             <paper-radio-group selected="{{config.type}}">
                 <template is="dom-repeat" items="[[_configurationTypes]]">
@@ -76,7 +70,7 @@
                 [[display.size.width]] &times; [[display.size.height]]
             </div>
         </div>
-        <div class="flex">
+        <div class="flex right-panel">
             <paper-material elevation="1">
                 <div class="fieldset-title">Camera focus</div>
                 <paper-dropdown-menu label="Presets">
@@ -101,7 +95,7 @@
             </paper-material>
             <paper-material elevation="1">
                 <div class="fieldset-title">Layers configuration</div>
-                <paper-dropdown-menu label="Day layer">
+                <paper-dropdown-menu label="Base layer">
                     <paper-listbox class="dropdown-content" selected="{{config.day}}" attr-for-selected="name">
                         <template is="dom-repeat" items="[[_layers.day]]">
                             <paper-item name="[[item.value]]">[[item.title]]</paper-item>
@@ -116,7 +110,7 @@
                     </paper-listbox>
                 </paper-dropdown-menu>
                 <iron-collapse opened="[[_is3d(config.type)]]">
-                    <paper-dropdown-menu label="Land depth">
+                    <paper-dropdown-menu label="Land depth map">
                         <paper-listbox class="dropdown-content" selected="{{config.depth}}" attr-for-selected="name">
                             <template is="dom-repeat" items="[[_layers.depth]]">
                                 <paper-item name="[[item.value]]">[[item.title]]</paper-item>

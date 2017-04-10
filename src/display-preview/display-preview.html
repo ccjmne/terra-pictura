@@ -8,13 +8,8 @@
         <style>
         :host {
             display: block;
-            background-color: grey;
-        }
-        
-        :host::after {
-            content: '';
-            display: block;
             padding-top: var(--aspect-ratio);
+            background-color: grey;
         }
         </style>
     </template>
@@ -37,9 +32,7 @@
         observers: ['_aspectRatioChanged(width, height)'],
 
         _aspectRatioChanged: function(width, height) {
-            console.log('oy')
             this.customStyle['--aspect-ratio'] = this.height / this.width * 100 + '%';
-            console.log(this.customStyle['--aspect-ratio'])
         }
     });
     </script>
