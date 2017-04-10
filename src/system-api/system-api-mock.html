@@ -1,0 +1,106 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="system-api-mock">
+    <template>
+        <style>
+        :host {
+            display: none;
+        }
+        </style>
+    </template>
+    <script>
+    Polymer({
+        is: 'system-api-mock',
+
+        properties: {
+            noWarning: {
+                type: Boolean,
+                value: false,
+                observer: '_noWarningChanged'
+            }
+        },
+
+        getDisplays: function() {
+            return [{
+                'id': 1,
+                'bounds': {
+                    'x': 0,
+                    'y': 0,
+                    'width': 1920,
+                    'height': 1080
+                },
+                'workArea': {
+                    'x': 0,
+                    'y': 0,
+                    'width': 1920,
+                    'height': 1080
+                },
+                'size': {
+                    'width': 1920,
+                    'height': 1080
+                },
+                'workAreaSize': {
+                    'width': 1920,
+                    'height': 1080
+                },
+                'scaleFactor': 1,
+                'rotation': 0
+            }, {
+                'id': 2,
+                'bounds': {
+                    'x': 0,
+                    'y': 2160,
+                    'width': 1920,
+                    'height': 1080
+                },
+                'workArea': {
+                    'x': 0,
+                    'y': 2160,
+                    'width': 1920,
+                    'height': 1080
+                },
+                'size': {
+                    'width': 1920,
+                    'height': 1080
+                },
+                'workAreaSize': {
+                    'width': 1920,
+                    'height': 1080
+                },
+                'scaleFactor': 1,
+                'rotation': 0
+            }, {
+                'id': 3,
+                'bounds': {
+                    'x': 1920,
+                    'y': 226,
+                    'width': 1366,
+                    'height': 768
+                },
+                'workArea': {
+                    'x': 1920,
+                    'y': 226,
+                    'width': 1366,
+                    'height': 768
+                },
+                'size': {
+                    'width': 1366,
+                    'height': 768
+                },
+                'workAreaSize': {
+                    'width': 1366,
+                    'height': 768
+                },
+                'scaleFactor': 1,
+                'rotation': 0
+            }]
+        },
+
+        _noWarningChanged: function(noWarning) {
+            if (!noWarning) {
+                console.error('Error: Do not use directly <system-api-mock />. Instead, use a <system-api mock="true" />');
+            }
+        }
+    });
+    </script>
+</dom-module>

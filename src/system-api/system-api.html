@@ -1,0 +1,76 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="system-api-mock.html">
+
+<dom-module id="system-api">
+    <template>
+        <style>
+        :host {
+            display: none;
+        }
+        </style>
+
+        <system-api-mock id="mock" no-warning></system-api-mock>
+    </template>
+    <script>
+    Polymer({
+        is: 'system-api',
+
+        properties: {
+            mock: {
+                type: Boolean,
+                value: false,
+                observer: '_mockChanged'
+            }
+        },
+
+        getPrimaryDisplay: function() {
+            if (this.mock) {
+                return this.$.mock.getDisplays()[0];
+            }
+
+            return this.__electron.screen.getPrimaryDisplay();
+        },
+
+        getDisplays: function() {
+            const primary = this.getPrimaryDisplay();
+
+            return (function getRawDisplays(mock) {
+                if (mock) {
+                    return this.$.mock.getDisplays();
+                }
+
+                return this.__electron.screen.getAllDisplays();
+            }).bind(this)(this.mock).map(function(display, idx) {
+                display.name = (function(idx) {
+                    switch (idx) {
+                        case 0:
+                            return '1st';
+                        case 1:
+                            return '2nd';
+                        case 2:
+                            return '3rd';
+                        default:
+                            return (idx + 1) + 'th';
+                    }
+                })(idx) + ' display';
+
+                if (display.id === primary.id) {
+                    display.name = display.name + ' (primary)';
+                }
+
+                return display;
+            });
+        },
+
+        _mockChanged: function(mock) {
+            if (mock) {
+                console.log('Using a mocked system environment');
+                delete this.__electron;
+            } else {
+                this.__electron = require('electron');
+            }
+        }
+    });
+    </script>
+</dom-module>

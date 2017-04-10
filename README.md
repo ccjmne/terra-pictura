@@ -8,9 +8,8 @@ Make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) 
 
 ## Development server
 
-```
-$ polymer serve
-```
+Run it into as an [Electron](https://github.com/electron/electron) app with `polymer serve`.
+Alternatively, to run it into a Web browser, use `polymer serve`. In that case, all the system-dependent functions will be mocked.
 
 ## Production build
 

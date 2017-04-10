@@ -4,13 +4,15 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+
+<link rel="import" href="../system-api/system-api.html">
 
 <dom-module id="terra-pictura-app">
     <template>
@@ -29,13 +31,19 @@
             }
         }
         
-        /deep/ paper-listbox paper-item:hover {
-            cursor: default;
+        paper-dropdown-menu,
+        paper-listbox {
+            width: 250px;
         }
         
         paper-material {
             margin: 20px;
             margin-top: 0;
+        }
+        
+        paper-material > paper-tabs {
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
         }
         
         iron-pages#configuration-pages {
@@ -49,19 +57,22 @@
         }
         </style>
 
+        <system-api id="system" mock="[[_mock]]"></system-api>
+
         <div class="header-main">
             <h1>Terra Pictura</h1>
         </div>
+
         <div class="flex layout vertical center">
-            <paper-dropdown-menu-light label="Update frequency">
-                <paper-listbox class="dropdown-content" selected="30m" attr-for-selected="name">
+            <paper-dropdown-menu label="Update frequency">
+                <paper-listbox class="dropdown-content" selected="{{config.frequency}}" attr-for-selected="name">
                     <template is="dom-repeat" items="[[_updateFrequencies]]">
                         <paper-item name="[[item.value]]">[[item.title]]</paper-item>
                     </template>
                 </paper-listbox>
-            </paper-dropdown-menu-light>
+            </paper-dropdown-menu>
 
-            <paper-radio-group selected="different">
+            <paper-radio-group selected="{{config.type}}">
                 <template is="dom-repeat" items="[[_configurationTypes]]">
                     <paper-radio-button name="[[item.value]]">[[item.title]]</paper-radio-button>
                 </template>
@@ -69,15 +80,14 @@
 
             <paper-material class="flex self-stretch" elevation="1">
                 <paper-tabs selected="{{_display}}" attr-for-selected="name">
-                    <paper-tab name="primary">Primary display</paper-tab>
-                    <paper-tab name="secondary">Display 2</paper-tab>
-                    <paper-tab name="3rd">Display 3</paper-tab>
+                    <template is="dom-repeat" items="[[_displays]]">
+                        <paper-tab name="[[item.id]]">[[item.name]]</paper-tab>
+                    </template>
                 </paper-tabs>
-
                 <iron-pages id="configuration-pages" class="flex self-stretch" selected="[[_display]]" attr-for-selected="name">
-                    <div name="primary">Page 1</div>
-                    <div name="secondary">Page 2</div>
-                    <div name="3rd">Page 3</div>
+                    <template is="dom-repeat" items="[[_displays]]">
+                        <div name="[[item.id]]">[[__toJSON(item)]]</div>
+                    </template>
                 </iron-pages>
             </paper-material>
         </div>
@@ -86,15 +96,28 @@
     Polymer({
         is: 'terra-pictura-app',
 
+        __toJSON: function(item) {
+            return JSON.stringify(item);
+        },
+
+        ready: function() {
+            this._displays = this.$.system.getDisplays();
+            this._display = this.$.system.getPrimaryDisplay().id
+            this.config = {
+                type: 'same',
+                frequency: '30m'
+            };
+        },
+
         properties: {
             title: {
                 type: String,
                 value: 'Terra Pictura'
             },
 
-            _display: {
-                type: String,
-                value: 'secondary'
+            _mock: {
+                type: Boolean,
+                value: typeof require === 'undefined'
             },
 
             _updateFrequencies: {
