@@ -7,20 +7,21 @@ const url = require('url');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-const livereload = require('electron-reload');
-if (livereload) {
-  livereload(__dirname);
-};
+require('electron-reload')(__dirname);
 
 app.on('ready', function createWindow() {
   const { width, height } = require('electron').screen.getPrimaryDisplay().workAreaSize;
-  mainWindow = new BrowserWindow({ width: 1280, height: 800, frame: false });
+  mainWindow = new BrowserWindow({ width: 1280, height: 800, frame: false, show: false });
 
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
     slashes: true
   }));
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
