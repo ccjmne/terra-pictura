@@ -24,6 +24,14 @@
             }
         },
 
+        identifyDisplays: function() {
+            if (this.mock) {
+                return;
+            }
+
+            this.getDisplays().forEach(this._identify.bind(this));
+        },
+
         getPrimaryDisplay: function() {
             if (this.mock) {
                 return this.$.mock.getDisplays()[0];
@@ -60,6 +68,50 @@
                 }
 
                 return display;
+            });
+        },
+
+        _identify: function(display) {
+            let identifierWindow = new(require('electron').remote.BrowserWindow)({
+                x: display.bounds.x + display.bounds.width / 2,
+                y: display.bounds.y + display.bounds.height / 2,
+                parent: require('electron').remote.getCurrentWindow(),
+                modal: true,
+                frame: false,
+                transparent: true,
+                alwaysOnTop: true,
+                fullscreen: true,
+                resizable: false,
+                minimizable: false,
+                show: false
+            });
+
+            identifierWindow.loadURL(require('url').format({
+                pathname: require('path').join(__dirname, 'index.display.html'),
+                protocol: 'file:',
+                slashes: true,
+                query: {
+                    name: display.name
+                }
+            }));
+
+            identifierWindow.on('close', function() {
+                identifierWindow = null;
+            });
+
+            identifierWindow.once('ready-to-show', () => {
+                identifierWindow.show();
+
+                const screen = require('electron').screen;
+                this.async(() => this.async(function handleMouseMove(orig) {
+                    const cur = screen.getCursorScreenPoint();
+                    if (cur.x != orig.x || cur.y != orig.y) {
+                        identifierWindow && identifierWindow.close();
+                        identifierWindow = null;
+                    } else {
+                        this.async(arguments.callee.bind(this, screen.getCursorScreenPoint()), 100);
+                    }
+                }.bind(this, screen.getCursorScreenPoint()), 100), 1000);
             });
         },
 
