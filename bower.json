@@ -3,7 +3,8 @@
   "main": "index.html",
   "dependencies": {
     "paper-elements": "PolymerElements/paper-elements#^1.0.7",
-    "vaadin-split-layout": "^1.1.0"
+    "vaadin-split-layout": "^1.1.0",
+    "paper-fab-speed-dial": "https://github.com/ccjmne/paper-fab-speed-dial.git#master"
   },
   "devDependencies": {
     "web-component-tester": "v6.0.0-prerelease.5",
