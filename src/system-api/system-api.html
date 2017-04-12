@@ -73,8 +73,10 @@
 
         _identify: function(display) {
             let identifierWindow = new(require('electron').remote.BrowserWindow)({
-                x: display.bounds.x + display.bounds.width / 2,
-                y: display.bounds.y + display.bounds.height / 2,
+                x: display.bounds.x,
+                y: display.bounds.y,
+                width: display.bounds.width,
+                height: display.bounds.height,
                 parent: require('electron').remote.getCurrentWindow(),
                 modal: true,
                 frame: false,
@@ -99,20 +101,28 @@
                 identifierWindow = null;
             });
 
-            identifierWindow.once('ready-to-show', () => {
-                identifierWindow.show();
-
+			function closeOnMouseMove() {
                 const screen = require('electron').screen;
-                this.async(() => this.async(function handleMouseMove(orig) {
-                    const cur = screen.getCursorScreenPoint();
-                    if (cur.x != orig.x || cur.y != orig.y) {
-                        identifierWindow && identifierWindow.close();
-                        identifierWindow = null;
-                    } else {
-                        this.async(arguments.callee.bind(this, screen.getCursorScreenPoint()), 100);
-                    }
-                }.bind(this, screen.getCursorScreenPoint()), 100), 1000);
-            });
+				this.async(function (orig) {
+	                const cur = screen.getCursorScreenPoint();
+	                if (cur.x != orig.x || cur.y != orig.y) {
+	                    identifierWindow && identifierWindow.close();
+	                    identifierWindow = null;
+	                } else {
+	                    this.async(arguments.callee.bind(this, screen.getCursorScreenPoint()), 100);
+	                }
+	            }.bind(this, screen.getCursorScreenPoint()), 100);
+			}
+
+            // on Ubuntu, {show: false} seems to have no effect
+            if(identifierWindow.isVisible()) {
+                this.async(closeOnMouseMove, 1000);
+            } else {
+	            identifierWindow.once('ready-to-show', () => {
+	                identifierWindow.show();
+	                this.async(closeOnMouseMove, 1000);
+	            });
+            }
         },
 
         _mockChanged: function(mock) {
