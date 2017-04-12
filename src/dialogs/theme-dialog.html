@@ -1,0 +1,122 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-swatch-picker/paper-swatch-picker.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<link rel="import" href="../terra-pictura-app/terra-pictura-palette.html">
+
+<dom-module id="theme-dialog">
+    <style is="custom-style">
+    paper-dialog#theme-dialog {
+        width: 250px;
+        border-radius: 2px;
+        font-size: 16px;
+        font-weight: normal;
+    }
+    
+    .header-primary {
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        line-height: 3em;
+        background-color: var(--primary-color);
+        color: var(--text-primary-color);
+        margin: 0;
+    }
+    
+    .fab-container {
+        padding: 0;
+        position: absolute;
+        right: 12px;
+        top: 6px;
+    }
+    
+    .paper-swatch-picker-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+        @apply(--layout-center);
+    }
+    
+    .paper-swatch-picker-container label {
+        color: var(--light-theme-secondary-color);
+    }
+    
+    paper-swatch-picker {
+        --paper-swatch-picker-color-size: 30px;
+    }
+    
+    /deep/ paper-swatch-picker > paper-menu-button {
+        padding: 0 !important;
+    }
+    </style>
+
+    <template>
+        <terra-pictura-palette id="palette" primary-color="{{primaryColor}}" accent-color="{{accentColor}}" dark-mode="{{darkMode}}"></terra-pictura-palette>
+
+        <paper-dialog id="theme-dialog" with-backdrop>
+            <div class="header-primary">Theme configuration</div>
+            <div class="fab-container">
+                <paper-fab id="does-nothing" mini icon="icons:fingerprint"></paper-fab>
+                <paper-tooltip for="does-nothing" position="left" animation-delay="0">This button does nothing</paper-tooltip>
+            </div>
+            <div class="paper-swatch-picker-container">
+                <label>Primary color</label>
+                <paper-swatch-picker color="{{primaryColor}}" color-list="[[swatches]]"></paper-swatch-picker>
+            </div>
+            <div class="paper-swatch-picker-container">
+                <label>Accent color</label>
+                <paper-swatch-picker color="{{accentColor}}" color-list="[[swatches]]"></paper-swatch-picker>
+            </div>
+            <div class="paper-swatch-picker-container">
+                <label>[[_getBrightnessLabel(darkMode)]]</label>
+                <paper-icon-button icon="[[_getBrightnessIcon(darkMode)]]" on-tap="_toggleDarkMode"></paper-icon-button>
+            </div>
+        </paper-dialog>
+    </template>
+    <script>
+    Polymer({
+        is: 'theme-dialog',
+
+        open: function() {
+            this.$['theme-dialog'].open();
+        },
+
+        _getBrightnessIcon: function(mode) {
+            return mode ? 'image:brightness-3' : 'image:wb-sunny';
+        },
+
+        _getBrightnessLabel: function(mode) {
+            return (mode ? 'Dark' : 'Bright') + ' mode';
+        },
+
+        _toggleDarkMode: function() {
+            this.darkMode = !this.darkMode;
+        },
+
+        ready: function() {
+            this._setAnimations(this.$.palette, ['fade-in-animation', 'scale-up-animation'], ['fade-out-animation', 'scale-down-animation']);
+            const palette = this.$.palette.getSwatchesPalette();
+            this.swatches = palette.reduce((acc, val) => acc.concat(val));
+        },
+
+        _setAnimations: function(node, entry, exit) {
+            function _mapAnimation(name) {
+                return {
+                    name: name,
+                    node: node
+                };
+            }
+
+            node.animationConfig = {
+                entry: (entry instanceof Array ? entry : [entry]).map(_mapAnimation),
+                exit: (exit instanceof Array ? exit : [exit]).map(_mapAnimation)
+            };
+        }
+    });
+    </script>
+</dom-module>

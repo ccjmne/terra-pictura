@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+
+<dom-module id="light-theme">
+    <template>
+        <style>
+        :root {
+            --text-primary-color: #ffffff;
+            --primary-text-color: var(--light-theme-text-color);
+            --light-theme-background-color: #ffffff;
+            --light-theme-base-color: #000000;
+            --light-theme-text-color: var(--paper-grey-900);
+            --light-theme-secondary-color: #737373;
+            --light-theme-disabled-color: #9b9b9b;
+            --light-theme-divider-color: #dbdbdb;
+        }
+        </style>
+    </template>
+</dom-module>
+
+<dom-module id="dark-theme">
+    <template>
+        <style>
+        :root {
+            --text-primary-color: var(--paper-grey-900);
+            --primary-text-color: var(--light-theme-text-color);
+            --light-theme-background-color: var(--paper-grey-800);
+            --light-theme-base-color: #eeeeee;
+            --light-theme-text-color: #cccccc;
+            --light-theme-secondary-color: #9b9b9b;
+            --light-theme-disabled-color: #9b9b9b;
+            --light-theme-divider-color: var(--paper-grey-600);
+        }
+        </style>
+    </template>
+</dom-module>
