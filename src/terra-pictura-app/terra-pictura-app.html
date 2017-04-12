@@ -26,7 +26,6 @@
     <template>
         <style is="custom-style" include="iron-flex iron-flex-alignment iron-positioning">
         :host {
-            --light-theme-background-color: white;
             display: block;
             @apply --layout-vertical;
             --paper-fab-background: var(--accent-color);
@@ -59,6 +58,11 @@
         
         paper-tabs {
             min-height: 48px;
+        }
+        
+        /deep/ paper-material {
+            background-color: var(--light-theme-background-color);
+            border-radius: 2px;
         }
         
         /deep/ paper-dropdown-menu iron-dropdown {

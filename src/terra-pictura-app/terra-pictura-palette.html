@@ -23,7 +23,7 @@
 
             accentColor: {
                 type: String,
-                value: '#c2185b',
+                value: '#e91e63',
                 notify: true,
                 observer: '_accentColorChanged'
             },
@@ -43,10 +43,6 @@
         },
 
         _primaryColorChanged: function(colorCode) {
-            if (!this._colors) {
-                this.ready();
-            }
-
             const color = this._lookupColor(colorCode);
             const appRootElement = this.__getAppRootElement();
             appRootElement.customStyle['--primary-color'] = colorCode;
@@ -63,10 +59,6 @@
         },
 
         _accentColorChanged: function(colorCode) {
-            if (!this._colors) {
-                this.ready()
-            }
-
             const color = this._lookupColor(colorCode);
             const appRootElement = this.__getAppRootElement();
             appRootElement.customStyle['--accent-color'] = colorCode;
@@ -83,18 +75,17 @@
         },
 
         _darkModeChanged: function(darkMode) {
-            const html = document.documentElement;
-            const themesStyles = _.find(html.getElementsByTagName('style'), {
+            (function unlink(currentTheme) {
+                currentTheme && currentTheme.parentNode && currentTheme.parentNode.removeChild(currentTheme);
+            })(_.find(document.documentElement.getElementsByTagName('style'), {
                 id: 'theme-style'
-            });
-            if (themesStyles) {
-                themesStyles.parentNode.removeChild(themesStyles);
-            }
+            }));
 
-            const myDomModule = document.createElement('style', 'custom-style');
-            myDomModule.id = 'theme-style';
-            myDomModule.setAttribute('include', darkMode ? 'dark-theme' : 'light-theme');
-            Polymer.dom(html).appendChild(myDomModule);
+            (function append(newTheme, include) {
+                newTheme.id = 'theme-style';
+                newTheme.setAttribute('include', include);
+                Polymer.dom(document.documentElement).appendChild(newTheme);
+            })(document.createElement('style', 'custom-style'), darkMode ? 'dark-theme' : 'light-theme');
         },
 
         _lookupColor: function(colorCode) {
@@ -110,7 +101,7 @@
             return this._colors[color.family][color.key];
         },
 
-        ready: function() {
+        created: function() {
             this._colors = {
                 'red': {
                     '50': '#ffebee',
