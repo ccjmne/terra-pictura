@@ -5,7 +5,8 @@
     "paper-elements": "PolymerElements/paper-elements#^1.0.7",
     "vaadin-split-layout": "^1.1.0",
     "paper-fab-speed-dial": "https://github.com/ccjmne/paper-fab-speed-dial.git#master",
-    "paper-swatch-picker": "^1.0.2"
+    "paper-swatch-picker": "^1.0.2",
+    "iron-pages": "~1.0.8"
   },
   "devDependencies": {
     "web-component-tester": "v6.0.0-prerelease.5",
