@@ -42,14 +42,7 @@
 
         getDisplays: function() {
             const primary = this.getPrimaryDisplay();
-
-            return (function getRawDisplays(mock) {
-                if (mock) {
-                    return this.$.mock.getDisplays();
-                }
-
-                return this.__electron.screen.getAllDisplays();
-            }).bind(this)(this.mock).map(function(display, idx) {
+            return (this.mock ? this.$.mock.getDisplays() : this.__electron.screen.getAllDisplays()).map(function(display, idx) {
                 display.name = (function(idx) {
                     switch (idx) {
                         case 0:
@@ -64,7 +57,7 @@
                 })(idx) + ' display';
 
                 if (display.id === primary.id) {
-                    display.name = display.name + ' (primary)';
+                    display.name += ' (primary)';
                 }
 
                 return display;
@@ -72,24 +65,42 @@
         },
 
         _identify: function(display) {
-            let identifierWindow = new(require('electron').remote.BrowserWindow)({
-                x: display.bounds.x,
-                y: display.bounds.y,
-                width: display.bounds.width,
-                height: display.bounds.height,
-                parent: require('electron').remote.getCurrentWindow(),
-                modal: true,
-                frame: false,
-                transparent: true,
-                alwaysOnTop: true,
-                fullscreen: true,
-                resizable: false,
-                minimizable: false,
-                show: false
-            });
+            let identifierWindow = new(this.__electron.remote.BrowserWindow)((os => {
+                switch (os) {
+                    case 'Linux':
+                        return {
+                            x: display.bounds.x + 1,
+                            y: display.bounds.y + 1,
+                            width: display.bounds.width,
+                            height: display.bounds.height,
+                            parent: this.__electron.remote.getCurrentWindow(),
+                            modal: true,
+                            frame: false,
+                            transparent: true,
+                            alwaysOnTop: true,
+                            fullscreen: true,
+                            resizable: false
+                        };
+                    case 'Windows_NT':
+                    default:
+                        return {
+                            x: display.bounds.x + display.bounds.width / 2,
+                            y: display.bounds.y + display.bounds.width / 2,
+                            parent: this.__electron.remote.getCurrentWindow(),
+                            modal: true,
+                            frame: false,
+                            transparent: true,
+                            alwaysOnTop: true,
+                            fullscreen: true,
+                            resizable: false,
+                            minimizable: false,
+                            show: false
+                        };
+                }
+            })(this.__os.type()));
 
-            identifierWindow.loadURL(require('url').format({
-                pathname: require('path').join(__dirname, 'index.display.html'),
+            identifierWindow.loadURL(this.__url.format({
+                pathname: this.__path.join(__dirname, 'index.display.html'),
                 protocol: 'file:',
                 slashes: true,
                 query: {
@@ -101,36 +112,41 @@
                 identifierWindow = null;
             });
 
-			function closeOnMouseMove() {
-                const screen = require('electron').screen;
-				this.async(function (orig) {
-	                const cur = screen.getCursorScreenPoint();
-	                if (cur.x != orig.x || cur.y != orig.y) {
-	                    identifierWindow && identifierWindow.close();
-	                    identifierWindow = null;
-	                } else {
-	                    this.async(arguments.callee.bind(this, screen.getCursorScreenPoint()), 100);
-	                }
-	            }.bind(this, screen.getCursorScreenPoint()), 100);
-			}
+            function closeOnMouseMove() {
+                const screen = this.__electron.screen;
+                this.async(function(orig) {
+                    const cur = screen.getCursorScreenPoint();
+                    if (cur.x != orig.x || cur.y != orig.y) {
+                        identifierWindow && identifierWindow.close();
+                        identifierWindow = null;
+                    } else {
+                        this.async(arguments.callee.bind(this, screen.getCursorScreenPoint()), 100);
+                    }
+                }.bind(this, screen.getCursorScreenPoint()), 100);
+            }
 
-            // on Ubuntu, {show: false} seems to have no effect
-            if(identifierWindow.isVisible()) {
-                this.async(closeOnMouseMove, 1000);
-            } else {
-	            identifierWindow.once('ready-to-show', () => {
-	                identifierWindow.show();
-	                this.async(closeOnMouseMove, 1000);
-	            });
+            switch (this.__os.type()) {
+                case 'Linux':
+                    // on most Linux platforms, a modal window can't ever be hidden
+                    this.async(closeOnMouseMove, 1000);
+                    break;
+                case 'Windows_NT':
+                default:
+                    // when possible, the window is hidden until rendered -- ready-to-show
+                    identifierWindow.once('ready-to-show', () => {
+                        identifierWindow.show();
+                        identifierWindow.focus();
+                        this.async(closeOnMouseMove, 1000);
+                    });
             }
         },
 
         _mockChanged: function(mock) {
             if (mock) {
                 console.log('Using a mocked system environment');
-                delete this.__electron;
+                ['os', 'electron', 'url', 'path'].forEach(module => delete this['__' + module]);
             } else {
-                this.__electron = require('electron');
+                ['os', 'electron', 'url', 'path'].forEach(module => this['__' + module] = require(module));
             }
         }
     });
