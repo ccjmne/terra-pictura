@@ -79,13 +79,13 @@
                 </paper-radio-group>
                 <display-preview width="[[display.size.width]]" height="[[display.size.height]]"></display-preview>
                 <div class="self-center">
-                    [[display.size.width]] &times; [[display.size.height]]
+                    <span>[[display.size.width]] &times; [[display.size.height]]</span>
                 </div>
             </div>
 
             <div class="flex layout vertical">
                 <paper-material elevation="1">
-                    <div class="fieldset-title">Camera focus</div>
+                    <span>Camera focus</span>
                     <paper-dropdown-menu label="Presets">
                         <paper-listbox class="dropdown-content" selected="{{config.preset}}" attr-for-selected="name">
                             <template is="dom-repeat" items="[[_cameraTypes]]">
@@ -107,7 +107,7 @@
                     </iron-collapse>
                 </paper-material>
                 <paper-material elevation="1">
-                    <div class="fieldset-title">Layers configuration</div>
+                    <span>Layers configuration</span>
                     <paper-dropdown-menu label="Base layer">
                         <paper-listbox class="dropdown-content" selected="{{config.day}}" attr-for-selected="name">
                             <template is="dom-repeat" items="[[_layers.day]]">
