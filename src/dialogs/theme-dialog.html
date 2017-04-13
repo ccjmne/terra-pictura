@@ -15,14 +15,14 @@
     <style is="custom-style">
     paper-dialog#theme-dialog {
         width: 250px;
-        border-radius: 2px;
         font-size: 16px;
         font-weight: normal;
+        border-radius: 2px;
+        /* the non-rounded header would otherwise overflow in the corners */
+        overflow: hidden;
     }
     
     .header-primary {
-        border-top-left-radius: 2px;
-        border-top-right-radius: 2px;
         line-height: 3em;
         background-color: var(--primary-color);
         color: var(--text-primary-color);
@@ -99,7 +99,7 @@
         },
 
         ready: function() {
-            this._setAnimations(this.$.palette, ['fade-in-animation', 'scale-up-animation'], ['fade-out-animation', 'scale-down-animation']);
+            this._setAnimations(this.$['theme-dialog'], ['fade-in-animation', 'scale-up-animation'], ['fade-out-animation', 'scale-down-animation']);
             this.palette = this.$.palette.getSwatchesPalette();
             this.swatches = this.palette.reduce((acc, val) => acc.concat(val));
         },
