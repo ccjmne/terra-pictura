@@ -21,6 +21,7 @@ app.on('ready', function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+    mainWindow.focus();
   });
 
   // Open the DevTools.
