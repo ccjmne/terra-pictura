@@ -1,12 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="terra-pictura-palette">
-    <style is="custom-style">
-    :host {
-        display: none;
-    }
-    </style>
+<link rel="import" href="../system-backup/system-backup.html">
 
+<dom-module id="terra-pictura-palette">
+    <template>
+        <style is="custom-style">
+        :host {
+            display: none;
+        }
+        </style>
+
+        <system-backup id="palette-backup" key="palette" data="{{_palette}}" mock="[[_mock]]" data-></system-backup>
+    </template>
     <script>
     Polymer({
         is: 'terra-pictura-palette',
@@ -31,12 +36,47 @@
                 value: true,
                 notify: true,
                 observer: '_darkModeChanged'
-            }
+            },
+
+            _mock: {
+                type: Boolean,
+                value: typeof require === 'undefined'
+            },
+        },
+
+        observers: ['_compilePalette(primaryColor, accentColor, darkMode)'],
+
+        listeners: {
+            'palette-backup.data-restored': '_onPaletteRestored'
         },
 
         getSwatchesPalette: function() {
             return Object.values(this._colors).map(function(family) {
                 return [family['400'], family['500'], family['600'], family['700']];
+            });
+        },
+
+        _onPaletteRestored: function(event) {
+            (palette => {
+                if (palette) {
+                    this.set('primaryColor', palette.primaryColor);
+                    this.set('accentColor', palette.accentColor);
+                    this.set('darkMode', palette.darkMode);
+                }
+            })(event.detail.data);
+
+            this.__paletteRestored = true;
+        },
+
+        _compilePalette: function(primaryColor, accentColor, darkMode) {
+            if (!this.__paletteRestored) {
+                return;
+            }
+
+            this.set('_palette', {
+                primaryColor: primaryColor,
+                accentColor: accentColor,
+                darkMode: darkMode
             });
         },
 
@@ -55,6 +95,7 @@
             });
 
             appRootElement.updateStyles();
+            this.set('_palette.primaryColor', colorCode);
         },
 
         _accentColorChanged: function(colorCode) {
@@ -71,6 +112,7 @@
             });
 
             appRootElement.updateStyles();
+            this.set('_palette.accentColor', colorCode);
         },
 
         _darkModeChanged: function(darkMode) {
@@ -85,6 +127,8 @@
                 newTheme.setAttribute('include', include);
                 Polymer.dom(document.documentElement).appendChild(newTheme);
             })(document.createElement('style', 'custom-style'), darkMode ? 'dark-theme' : 'light-theme');
+
+            this.set('_palette.darkMode', darkMode);
         },
 
         _lookupColor: function(colorCode) {
