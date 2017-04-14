@@ -4,7 +4,8 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
@@ -30,7 +31,7 @@
             @apply --layout-vertical;
             --paper-fab-background: var(--accent-color);
             --paper-fab-keyboard-focus-background: var(--dark-accent-color);
-            --paper-tabs-selection-bar-color: var(--light-theme-background-color);
+            --paper-tabs-selection-bar-color: var(--accent-color);
             --paper-tab-ink: white;
             --paper-fab-speed-dial-orientation: var(--layout-horizontal-reverse);
             --paper-fab-speed-dial--inner-fab: {
@@ -49,13 +50,13 @@
             }
             --paper-tabs-selection-bar: {
                 border-bottom-width: 4px;
-                z-index: 1;
             }
-        }
-        
-        /deep/ paper-tab:not(.iron-selected) {
-            transition: background-color .5s;
-            background-color: var(--dark-primary-color);
+            --paper-tabs-content: {
+                @apply(--layout-center-justified);
+            }
+            --paper-tab: {
+                flex: none;
+            }
         }
         
         paper-dropdown-menu {
@@ -99,6 +100,10 @@
             top: 0;
             left: 0;
         }
+        
+        neon-animated-pages {
+            overflow: hidden;
+        }
         </style>
 
         <system-api id="system" mock="[[_mock]]"></system-api>
@@ -130,24 +135,32 @@
             </paper-tabs>
             <!-- TODO: remove -->
             <!-- <as-json data="[[config]]" id="config" ugly></as-json> -->
-            <iron-pages class="flex self-stretch" selected="[[_display]]" attr-for-selected="name">
+            <neon-animated-pages class="flex self-stretch" selected="[[_display]]" attr-for-selected="name" entry-animation="slide-from-top-animation" exit-animation="fade-out-animation">
                 <template is="dom-repeat" items="[[_displays]]">
                     <display-configuration name="[[item.id]]" display="[[item]]" global-config="{{config}}"></display-configuration>
                 </template>
-            </iron-pages>
+            </neon-animated-pages>
         </div>
 
-        <paper-fab-speed-dial id="speed-dial">
+        <paper-fab-speed-dial id="speed-dial" opened="{{speedDialOpen}}">
             <paper-fab icon="menu"></paper-fab>
             <div class="dropdown-content">
-                <paper-fab id="fab-check" mini icon="icons:check"></paper-fab>
-                <paper-tooltip for="fab-check" position="top" animation-delay="0">Apply and save</paper-tooltip>
-                <paper-fab id="fab-close" mini icon="icons:close"></paper-fab>
-                <paper-tooltip for="fab-close" position="top" animation-delay="0">Cancel and close</paper-tooltip>
-                <paper-fab id="fab-search" mini icon="icons:search" on-tap="_identify"></paper-fab>
-                <paper-tooltip for="fab-search" position="top" animation-delay="0">Identify displays</paper-tooltip>
-                <paper-fab id="fab-palette" mini icon="image:palette" on-tap="_editTheme"></paper-fab>
-                <paper-tooltip for="fab-palette" position="top" animation-delay="0">Change theme</paper-tooltip>
+                <div>
+                    <paper-fab id="fab-check" mini icon="icons:check"></paper-fab>
+                    <paper-tooltip for="fab-check" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Apply and save</paper-tooltip>
+                </div>
+                <div>
+                    <paper-fab id="fab-close" mini icon="icons:close"></paper-fab>
+                    <paper-tooltip for="fab-close" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Cancel and close</paper-tooltip>
+                </div>
+                <div>
+                    <paper-fab id="fab-search" mini icon="icons:search" on-tap="_identify"></paper-fab>
+                    <paper-tooltip for="fab-search" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Identify displays</paper-tooltip>
+                </div>
+                <div>
+                    <paper-fab id="fab-palette" mini icon="image:palette" on-tap="_editTheme"></paper-fab>
+                    <paper-tooltip for="fab-palette" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Change theme</paper-tooltip>
+                </div>
             </div>
         </paper-fab-speed-dial>
     </template>
@@ -174,6 +187,14 @@
         _editTheme: function() {
             this.$.theme.open();
             this.$['speed-dial'].close();
+        },
+
+        observers: ['_speedDialOpenChanged(speedDialOpen)'],
+
+        _speedDialOpenChanged: function(open) {
+            if (!open) {
+                Array.prototype.slice.call(this.$['speed-dial'].getElementsByTagName('paper-tooltip')).forEach(tooltip => tooltip.hide());
+            }
         },
 
         properties: {
