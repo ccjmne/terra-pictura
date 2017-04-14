@@ -36,7 +36,7 @@
 
         getSwatchesPalette: function() {
             return Object.values(this._colors).map(function(family) {
-                return [family['500'], family['600'], family['700']];
+                return [family['400'], family['500'], family['600'], family['700']];
             });
         },
 
@@ -46,8 +46,10 @@
             appRootElement.customStyle['--primary-color'] = colorCode;
             appRootElement.customStyle['--light-primary-color'] = this._getColorCode({
                 family: color.family,
-                key: color.key - 400
+                key: (color.key - 400) || 50
             });
+
+            console.log(appRootElement.customStyle['--light-primary-color'])
             appRootElement.customStyle['--dark-primary-color'] = this._getColorCode({
                 family: color.family,
                 key: color.key + 200
@@ -62,7 +64,7 @@
             appRootElement.customStyle['--accent-color'] = colorCode;
             appRootElement.customStyle['--light-accent-color'] = this._getColorCode({
                 family: color.family,
-                key: color.key - 400
+                key: (color.key - 400) || 50
             });
             appRootElement.customStyle['--dark-accent-color'] = this._getColorCode({
                 family: color.family,
