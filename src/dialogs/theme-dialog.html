@@ -18,22 +18,26 @@
         font-size: 16px;
         font-weight: normal;
         border-radius: 2px;
-        /* the non-rounded header would otherwise overflow in the corners */
-        overflow: hidden;
     }
     
     .header-primary {
-        line-height: 3em;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
         background-color: var(--primary-color);
         color: var(--text-primary-color);
+        padding: 1em;
         margin: 0;
+        /* Pulling this element up 1px:
+         * its top edge's rounded borders somehow seem to not perfectly align with the paper-dialog's otherwise */
+        position: relative;
+        top: -1px;
     }
     
     .fab-container {
         padding: 0;
         position: absolute;
         right: 12px;
-        top: 6px;
+        top: 10px;
     }
     
     .paper-swatch-picker-container {
