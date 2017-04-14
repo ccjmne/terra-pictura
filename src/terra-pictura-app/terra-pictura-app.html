@@ -30,7 +30,7 @@
             @apply --layout-vertical;
             --paper-fab-background: var(--accent-color);
             --paper-fab-keyboard-focus-background: var(--dark-accent-color);
-            --paper-tabs-selection-bar-color: var(--light-primary-color);
+            --paper-tabs-selection-bar-color: var(--light-theme-background-color);
             --paper-tab-ink: white;
             --paper-fab-speed-dial-orientation: var(--layout-horizontal-reverse);
             --paper-fab-speed-dial--inner-fab: {
@@ -49,7 +49,13 @@
             }
             --paper-tabs-selection-bar: {
                 border-bottom-width: 4px;
+                z-index: 1;
             }
+        }
+        
+        /deep/ paper-tab:not(.iron-selected) {
+            transition: background-color .5s;
+            background-color: var(--dark-primary-color);
         }
         
         paper-dropdown-menu {
