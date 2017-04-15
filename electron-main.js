@@ -7,7 +7,7 @@ const url = require('url');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-require('electron-reload')(__dirname);
+//require('electron-reload')(__dirname);
 
 app.on('ready', function createWindow() {
   const { width, height } = require('electron').screen.getPrimaryDisplay().workAreaSize;
@@ -25,7 +25,7 @@ app.on('ready', function createWindow() {
   });
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

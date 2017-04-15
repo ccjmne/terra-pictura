@@ -1,0 +1,9 @@
+{
+  "entrypoint": "index.html",
+  "sources": [
+    "src/**/*",
+    "index.display.html",
+    "electron-main.js",
+    "package.json"
+  ]
+}
