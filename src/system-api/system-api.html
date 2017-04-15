@@ -101,17 +101,6 @@
 
             identifierWindow.once('ready-to-show', () => {
                 identifierWindow.show();
-
-                const screen = require('electron').screen;
-                this.async(() => this.async(function handleMouseMove(orig) {
-                    const cur = screen.getCursorScreenPoint();
-                    if (cur.x != orig.x || cur.y != orig.y) {
-                        identifierWindow && identifierWindow.close();
-                        identifierWindow = null;
-                    } else {
-                        this.async(arguments.callee.bind(this, screen.getCursorScreenPoint()), 100);
-                    }
-                }.bind(this, screen.getCursorScreenPoint()), 100), 1000);
             });
         },
 

@@ -32,7 +32,7 @@
         }
         
         #hint {
-            opacity: .7;
+            opacity: .8;
         }
         
         .shrunk {
@@ -54,19 +54,33 @@
         ready: function() {
             this.name = this.__getQueryParameter('name');
             this._timing = this.timingFromConfig({});
+            this.async(this._scale(this.$.disc, this._timing, 1), 100);
+            this.async(this._scale(this.$.hint, this._timing, 1), this._timing.duration);
+            this._setupDismiss();
+        },
 
-            function scale(timing, factor) {
-                this.style.transition = 'transform ' + timing.duration + 'ms ' + timing.easing;
-                this.style.transform = 'scale(' + (factor || 0) + ')';
+        _scale: function(node, timing, factor) {
+            node.style.transition = 'transform ' + timing.duration + 'ms ' + timing.easing;
+            return () => node.style.transform = 'scale(' + (factor || 0) + ')';
+        },
+
+        _setupDismiss: function() {
+            if (typeof require === 'undefined') {
+                return;
             }
 
-            ((disc, hint) => {
-                this.async(scale.bind(disc, this._timing, 1), 100);
-                this.async(scale.bind(hint, this._timing, 1), this._timing.duration);
-            })(this.$.disc, this.$.hint);
+            const screen = require('electron').screen;
+            this.async(function handleMouseMove(orig) {
+                const cur = screen.getCursorScreenPoint();
+                if (orig && (cur.x != orig.x || cur.y != orig.y)) {
+                    return window.close();
+                }
+
+                this.async(arguments.callee.bind(this, screen.getCursorScreenPoint()), 100);
+            }.bind(this), this._timing.duration * 2);
 
             window.addEventListener('beforeunload', function(event) {
-                scale.bind(disc)(this._timing);
+                this._scale(this.$.disc, this._timing)();
                 this.async(window.close, this._timing.duration);
                 event.returnValue = false;
             }.bind(this), {
