@@ -1,81 +1,44 @@
 <!doctype html>
 <html lang="en">
 
-    <link rel="import" href="src/terra-pictura-app/terra-pictura-theme.html">
+    <head>
+        <meta charset="utf-8">
 
-    <style is="custom-style">
-    :root {
-        --disc-diameter: 250px;
-    }
-    
+        <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+        <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+        <script type="text/javascript" src="node_modules/lodash/lodash.min.js"></script>
+
+        <link rel="import" href="bower_components/polymer/polymer.html">
+        <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+        <link rel="import" href="bower_components/font-roboto/roboto.html">
+
+        <link rel="import" href="src/terra-pictura-app/terra-pictura-display-identifier.html">
+        <link rel="import" href="src/terra-pictura-app/themes-styles.html">
+    </head>
+
+    <style is="custom-style" include="iron-flex iron-positioning">
     body {
-        height: 100vh;
-        margin: 0;
         background-color: rgba(0, 0, 0, 0.35);
         font-family: 'Roboto', 'Noto', sans-serif;
         -webkit-font-smoothing: antialiased;
-        font-weight: 300;
+        user-select: none;
     }
     
-    #disc {
-        width: var(--disc-diameter);
-        height: var(--disc-diameter);
-        background-color: var(--accent-color);
-        border: 1px solid var(--light-accent-color);
-        border-radius: 50%;
-    }
-    
-    #title {
-        font-size: 1.3em;
-        color: white;
-    }
-    
-    #hint {
-        color: var(--light-accent-color);
-    }
-    
-    .flex-center-center {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .shrunk {
-        transform: scale(0);
-        transition: transform .5s cubic-bezier(0.68, -0.20, 0.265, 1.40);
+    /deep/ p,
+    /deep/ h1,
+    /deep/ h2,
+    /deep/ h3,
+    /deep/ h4,
+    /deep/ h5,
+    /deep/ h6,
+    /deep/ span,
+    /deep/ paper-item {
+        cursor: default;
     }
     </style>
 
-    <body class="flex-center-center">
-        <div id="disc" class="flex-center-center shrunk">
-            <span id="title"></span>
-            <span id="hint" class="shrunk">[&nbsp;move your cursor to dismiss&nbsp;]</span>
-        </div>
-
-        <script type="text/javascript">
-        function getQueryVariable(variable) {
-            const vars = window.location.search.substring(1).split('&');
-            for (let i = 0; i < vars.length; i++) {
-                const pair = vars[i].split('=');
-                if (decodeURIComponent(pair[0]) == variable) {
-                    return decodeURIComponent(pair[1]);
-                }
-            }
-
-            console.log('Query variable %s not found', variable);
-        }
-
-        function elasticScale() {
-            this.style.transform = 'scale(1)';
-        }
-
-        ((disc, title, hint) => {
-            title.innerHTML = getQueryVariable('name');
-            setTimeout(elasticScale.bind(disc), 0);
-            setTimeout(elasticScale.bind(hint), 500);
-        })(document.getElementById('disc'), document.getElementById('title'), document.getElementById('hint'));
-        </script>
+    <body class="fullbleed">
+        <terra-pictura-display-identifier></terra-pictura-display-identifier>
     </body>
 
 </html>

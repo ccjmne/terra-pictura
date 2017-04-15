@@ -378,7 +378,7 @@
         },
 
         __getAppRootElement: function() {
-            return document.getElementsByTagName('terra-pictura-app')[0];
+            return document.getElementsByTagName('terra-pictura-app')[0] || document.getElementsByTagName('terra-pictura-display-identifier')[0]
         }
     });
     </script>

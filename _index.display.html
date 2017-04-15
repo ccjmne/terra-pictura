@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+
+    <style type="text/css">
+    :root {
+        --disc-diameter: 250px;
+    }
+    
+    body {
+        height: 100vh;
+        margin: 0;
+        background-color: rgba(0, 0, 0, 0.35);
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-weight: 300;
+    }
+    
+    #disc {
+        width: var(--disc-diameter);
+        height: var(--disc-diameter);
+        background-color: var(--accent-color);
+        border: 1px solid var(--light-accent-color);
+        border-radius: 50%;
+    }
+    
+    #title {
+        font-size: 1.3em;
+        color: white;
+    }
+    
+    #hint {
+        color: var(--light-accent-color);
+    }
+    
+    .flex-center-center {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .shrunk {
+        transform: scale(0);
+        transition: transform .5s cubic-bezier(0.68, -0.20, 0.265, 1.40);
+    }
+    </style>
+
+    <body class="flex-center-center">
+        <div id="disc" class="flex-center-center shrunk">
+            <span id="title"></span>
+            <span id="hint" class="shrunk">[&nbsp;move your cursor to dismiss&nbsp;]</span>
+        </div>
+
+        <script type="text/javascript">
+        function getQueryVariable(variable) {
+            const vars = window.location.search.substring(1).split('&');
+            for (let i = 0; i < vars.length; i++) {
+                const pair = vars[i].split('=');
+                if (decodeURIComponent(pair[0]) == variable) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+
+            console.log('Query variable %s not found', variable);
+        }
+
+        function elasticScale() {
+            this.style.transform = 'scale(1)';
+        }
+
+        ((disc, title, hint) => {
+            title.innerHTML = getQueryVariable('name');
+            setTimeout(elasticScale.bind(disc), 0);
+            setTimeout(elasticScale.bind(hint), 500);
+        })(document.getElementById('disc'), document.getElementById('title'), document.getElementById('hint'));
+
+        document.documentElement.style.setProperty(`--primary-color`, getQueryVariable('primaryColor'));
+        document.documentElement.style.setProperty(`--accent-color`, getQueryVariable('accentColor'));
+        </script>
+    </body>
+
+</html>
