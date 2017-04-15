@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
+<link rel="import" href="../../bower_components/neon-animation/neon-animation-behavior.html">
+
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <link rel="import" href="terra-pictura-palette.html">
@@ -35,15 +37,13 @@
         
         .shrunk {
             transform: scale(0);
-            transition: transform .5s cubic-bezier(0.68, -0.20, 0.265, 1.40);
         }
         </style>
-
 
         <terra-pictura-palette></terra-pictura-palette>
 
         <paper-material elevation="3" id="disc" class="layout vertical center-center shrunk">
-            <span id="title"></span>
+            <span id="title">[[name]]</span>
             <span id="hint" class="shrunk">[&nbsp;move your cursor to dismiss&nbsp;]</span>
         </paper-material>
     </template>
@@ -52,39 +52,43 @@
         is: 'terra-pictura-display-identifier',
 
         ready: function() {
-            function getQueryVariable(variable) {
-                const vars = window.location.search.substring(1).split('&');
-                for (let i = 0; i < vars.length; i++) {
-                    const pair = vars[i].split('=');
-                    if (decodeURIComponent(pair[0]) == variable) {
-                        return decodeURIComponent(pair[1]);
-                    }
-                }
+            this.name = this.__getQueryParameter('name');
+            this._timing = this.timingFromConfig({});
 
-                console.log('Query variable %s not found', variable);
+            function scale(timing, factor) {
+                this.style.transition = 'transform ' + timing.duration + 'ms ' + timing.easing;
+                this.style.transform = 'scale(' + (factor || 0) + ')';
             }
 
-            function scaleIn() {
-                this.style.transform = 'scale(1)';
-            }
-
-            function scaleOut() {
-                this.style.transform = 'scale(0)';
-            }
-
-            ((disc, title, hint) => {
-                title.innerHTML = getQueryVariable('name');
-                setTimeout(scaleIn.bind(disc), 100);
-                setTimeout(scaleIn.bind(hint), 500);
-            })(document.getElementById('disc'), document.getElementById('title'), document.getElementById('hint'));
+            ((disc, hint) => {
+                this.async(scale.bind(disc, this._timing, 1), 100);
+                this.async(scale.bind(hint, this._timing, 1), this._timing.duration);
+            })(this.$.disc, this.$.hint);
 
             window.addEventListener('beforeunload', function(event) {
-                scaleOut.bind(disc)();
-                setTimeout(window.close, 500);
-                setTimeout(() => window.removeEventListener('beforeunload', arguments.callee), 0);
+                scale.bind(disc)(this._timing);
+                this.async(window.close, this._timing.duration);
                 event.returnValue = false;
+            }.bind(this), {
+                once: true
             });
-        }
+        },
+
+        __getQueryParameter: function(key) {
+            const vars = window.location.search.substring(1).split('&');
+            for (let i = 0; i < vars.length; i++) {
+                const pair = vars[i].split('=');
+                if (decodeURIComponent(pair[0]) == key) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+
+            console.warn('Query parameter \'%s\' not found ', key);
+        },
+
+        behaviors: [
+            Polymer.NeonAnimationBehavior
+        ]
     });
     </script>
 </dom-module>
