@@ -17,7 +17,7 @@ npm install && bower install
 
 ## Development run
 
-For development, this application can be run as either an [Electron](https://github.com/electron/electron) or a Web app.
+For development, this application can be run as either a Web or an [Electron](https://github.com/electron/electron) app.
 
 ### As an Electron app
 
@@ -51,11 +51,10 @@ This will create a `build/default` directory containing an bundled [Polymer](htt
 To package the app with [Electron](https://github.com/electron/electron):
 ```shell-script
 gulp package:all
-
 ```
 This will:
 - run the `package:web` task that rebuilds the application from scratch
-- package [Electron](https://github.com/electron/electron) apps for **all** _platforms_ and _architectures_ under `build/packaged`.
+- package [Electron](https://github.com/electron/electron) apps for **all** _platforms_ and _architectures_ under `build/packaged`
 
 ### Specific platform
 
