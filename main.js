@@ -7,8 +7,6 @@ const url = require('url');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-//require('electron-reload')(__dirname);
-
 app.on('ready', function createWindow() {
   const { width, height } = require('electron').screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({ width: 1280, height: 800, frame: false, show: false });

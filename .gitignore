@@ -3,5 +3,6 @@ dist
 build
 
 # Dev directories
+dev
 bower_components
 node_modules

@@ -72,10 +72,10 @@
         },
 
         _identify: function(display) {
-            let identifierWindow = new(require('electron').remote.BrowserWindow)({
+            let identifierWindow = new(this.__electron.remote.BrowserWindow)({
                 x: display.bounds.x + display.bounds.width / 2,
                 y: display.bounds.y + display.bounds.height / 2,
-                parent: require('electron').remote.getCurrentWindow(),
+                parent: this.__electron.remote.getCurrentWindow(),
                 modal: true,
                 frame: false,
                 transparent: true,
@@ -101,6 +101,7 @@
 
             identifierWindow.once('ready-to-show', () => {
                 identifierWindow.show();
+                identifierWindow.webContents.openDevTools();
             });
         },
 
