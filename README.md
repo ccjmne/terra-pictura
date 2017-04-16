@@ -32,7 +32,7 @@ To run this project as a Web app, you'll need to have the [Polymer CLI](https://
 Run it with `polymer serve`. The app will be served over `http` on your local machine on the port `8081`.  
 Use `polymer serve --open` to have your default Web browser automatically connect to it when it's ready.
 
-**Important note**: When running as a Web app, all the system-dependent functions will be **mocked**.
+> **Note**: When running as a Web app, all the system-dependent functions will be **mocked**.
 
 ## Production build
 
@@ -44,7 +44,7 @@ gulp package:web
 ```
 This will create a `build/default` directory containing an bundled [Polymer](https://github.com/Polymer/polymer) app run through HTML, CSS, and JS optimizers.
 
-**Important note**: When running as a Web app, all the system-dependent functions will be **mocked**.
+> **Note**: When running as a Web app, all the system-dependent functions will be **mocked**.
 
 ### All platforms
 
