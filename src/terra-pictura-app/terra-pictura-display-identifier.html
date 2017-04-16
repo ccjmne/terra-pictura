@@ -72,7 +72,7 @@
             const screen = require('electron').screen;
             this.async(function handleMouseMove(orig) {
                 const cur = screen.getCursorScreenPoint();
-                if (orig && (cur.x != orig.x || cur.y != orig.y)) {
+                if (orig && (Math.abs(cur.x - orig.x) > 5 || Math.abs(cur.y - orig.y) > 5)) {
                     return window.close();
                 }
 
