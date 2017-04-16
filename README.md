@@ -2,10 +2,11 @@
 
 A cross-platform desktop application that maintains your wallpaper as a "live", customisable representation of the Earth.
 
-# Technologies
+## Technologies
 
-This project is essentially a [Polymer](https://github.com/Polymer/polymer) Web app, packaged with [Electron](https://github.com/electron/electron).
-It uses WebGL for the 3D rendering. The Earth's texture files (including the clouds layer) were provided by the [NASA](https://www.nasa.gov/).
+This project is essentially a [Polymer](https://github.com/Polymer/polymer) Web app, packaged into a desktop application with [Electron](https://github.com/electron/electron).  
+It uses WebGL for the 3D rendering.  
+The Earth's texture files (including the clouds layer) were provided by the [NASA](https://www.nasa.gov/).
 
 ## Development setup
 
@@ -14,23 +15,52 @@ Simply install the `node` and `bower` dependencies using:
 npm install && bower install
 ```
 
-## Development server
+## Development run
 
-Run it into as an [Electron](https://github.com/electron/electron) app with `gulp start`. To enable live-reload, use `gulp dev start`.
-Alternatively, to run it into a Web browser, use `polymer serve`. In that case, all the system-dependent functions will be mocked.
+For development, this application can be run as either an [Electron](https://github.com/electron/electron) or a Web app.
+
+### As an Electron app
+
+Run this project as an [Electron](https://github.com/electron/electron) app with `gulp start`.  
+To enable live-reload, use `gulp dev start`.
+
+
+### As a Web app
+
+To run this project as a Web app, you'll need to have the [Polymer CLI](https://github.com/Polymer/polymer-cli) installed globally.
+
+Run it with `polymer serve`. The app will be served over `http` on your local machine on the port `8081`.  
+Use `polymer serve --open` to have your default Web browser automatically connect to it when it's ready.
+
+**Important note**: When running as a Web app, all the system-dependent functions will be **mocked**.
 
 ## Production build
 
-To build the embedded Web app only:
-```shell-script
-gulp polymer-build
-```
-This will create a `build/default` containing an bundled [Polymer](https://github.com/Polymer/polymer) app run through HTML, CSS, and JS optimizers.
+### Web only
 
-To package the app as with [Electron](https://github.com/electron/electron):
+To only build the embedded Web app:
+```shell-script
+gulp package:web
+```
+This will create a `build/default` directory containing an bundled [Polymer](https://github.com/Polymer/polymer) app run through HTML, CSS, and JS optimizers.
+
+**Important note**: When running as a Web app, all the system-dependent functions will be **mocked**.
+
+### All platforms
+
+To package the app with [Electron](https://github.com/electron/electron):
 ```shell-script
 gulp package:all
 
 ```
-This will first run the `polymer-build` task that rebuilds the application from scratch, then package Electron apps for **all** `platform`s and `arch`itectures under `build/packaged`.
-To only package for a particular `platform`, additional tasks are provided, such as `package:win32` for Windows platforms.
+This will:
+- run the `package:web` task that rebuilds the application from scratch
+- package [Electron](https://github.com/electron/electron) apps for **all** _platforms_ and _architectures_ under `build/packaged`.
+
+### Specific platform
+
+To only package for a specific _platform_, additional tasks are provided.  
+For example, you can package the app for both _architectures_ (`ia32` and `x64`) of the `win32` _platform_ using:
+```shell-script
+gulp package:win32
+```
