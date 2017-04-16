@@ -31,7 +31,7 @@ gulp.task('start', () => {
 });
 
 // TODO: use a non-global polymer-cli
-gulp.task('polymer-build', shell.task([
+gulp.task('package:web', shell.task([
   'polymer build --js-minify --css-minify --html-minify --bundle',
   'npm install --prefix build/default --production ' + _(package.dependencies).omit('electron').keys().value().join(' ')
 ]));
@@ -62,24 +62,28 @@ gulp.task('package:opts', () => {
   }
 });
 
-gulp.task('package:win32', ['platform:win32', 'package:opts', 'polymer-package'], done => {
-  packager(packagerOpts, (err, path) => {
+gulp.task('package:win32', ['platform:win32', 'package:opts', 'package:web'], done => {
+  packager(packagerOpts, (err, paths) => {
     if (err) {
       throw new gutil.PluginError('electron-packager', err);
     }
 
-    gutil.log('[package:win32] Electron app successfully built in: ' + path);
+    gutil.log('Packaging complete!');
+    console.log('The apps were generated in the following directories:')
+    Array.prototype.forEach.call(paths, path => console.log(path));
     done();
   })
 });
 
-gulp.task('package:all', ['package:opts', 'polymer-package'], done => {
+gulp.task('package:all', ['package:opts', 'package:web'], done => {
   packager(packagerOpts, (err, path) => {
     if (err) {
       throw new gutil.PluginError('electron-packager', err);
     }
 
-    gutil.log('[package:all] Electron app successfully built in: ' + path);
+    gutil.log('Packaging complete!');
+    console.log('The apps were generated in the following directories:')
+    Array.prototype.slice.call(paths).forEach(path => console.log(path));
     done();
   })
 });

@@ -3,7 +3,7 @@
   "sources": [
     "src/**/*",
     "index.display.html",
-    "electron-main.js",
+    "main.js",
     "package.json"
   ]
 }
