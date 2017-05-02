@@ -88,6 +88,12 @@
             overflow-x: hidden;
         }
         
+        paper-icon-button#close {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        
         .header-main {
             background-color: var(--primary-color);
             color: var(--text-primary-color);
@@ -112,6 +118,7 @@
 
         <div class="header-main">
             <h1>Terra Pictura</h1>
+            <paper-icon-button id="close" icon="icons:close" on-tap="close"></paper-icon-button>
         </div>
 
         <div class="flex layout vertical center">
@@ -151,7 +158,7 @@
                     <paper-tooltip for="fab-check" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Apply and save</paper-tooltip>
                 </div>
                 <div>
-                    <paper-fab id="fab-close" mini icon="icons:close"></paper-fab>
+                    <paper-fab id="fab-close" mini icon="icons:close" on-tap="close"></paper-fab>
                     <paper-tooltip for="fab-close" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Cancel and close</paper-tooltip>
                 </div>
                 <div>
@@ -178,6 +185,10 @@
                 displays: {}
             };
             this._displays.forEach(display => this.set('config.displays.' + display.id, {}));
+        },
+
+        close: function() {
+            window.close()
         },
 
         _identify: function() {
