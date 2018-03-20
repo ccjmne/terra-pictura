@@ -6,15 +6,16 @@
     "vaadin-split-layout": "^1.1.0",
     "paper-fab-speed-dial": "https://github.com/ccjmne/paper-fab-speed-dial.git#master",
     "paper-swatch-picker": "^1.0.2",
-    "iron-pages": "~1.0.8"
+    "iron-pages": "~1.0.8",
+    "iron-icons": "^1.0.0",
+    "polymer": "=1.8.1"
   },
   "devDependencies": {
     "web-component-tester": "v6.0.0-prerelease.5",
     "webcomponentsjs": "webcomponents/webcomponentsjs#1.0.0-rc.5"
   },
   "resolutions": {
-    "webcomponentsjs": "^v1.0.0-rc.5",
-    "polymer": "^1.8.1",
+    "webcomponentsjs": "1.0.0-rc.5",
     "iron-a11y-keys-behavior": "^1.1.5",
     "iron-behaviors": "^1.0.0",
     "iron-checked-element-behavior": "^1.0.0",
