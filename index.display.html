@@ -3,13 +3,6 @@
 
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-
-        <title>Terra Pictura</title>
-        <meta name="description" content="terra-pictura-polymer description">
-
-        <!-- See https://goo.gl/OOhYW5 -->
-        <link rel="manifest" href="/manifest.json">
 
         <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
         <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
@@ -19,14 +12,12 @@
         <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
         <link rel="import" href="bower_components/font-roboto/roboto.html">
 
-        <link rel="import" href="src/terra-pictura-app/terra-pictura-app.html">
+        <link rel="import" href="src/terra-pictura-app/terra-pictura-display-identifier.html">
         <link rel="import" href="src/terra-pictura-app/themes-styles.html">
     </head>
 
     <style is="custom-style" include="iron-flex iron-positioning">
     body {
-        background-color: var(--light-theme-secondary-background-color);
-        color: var(--light-theme-base-color);
         font-family: 'Roboto', 'Noto', sans-serif;
         -webkit-font-smoothing: antialiased;
         user-select: none;
@@ -46,7 +37,7 @@
     </style>
 
     <body class="fullbleed">
-        <terra-pictura-app class="fit"></terra-pictura-app>
+        <terra-pictura-display-identifier></terra-pictura-display-identifier>
     </body>
 
 </html>

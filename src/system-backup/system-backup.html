@@ -1,0 +1,61 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="system-backup">
+    <template>
+        <style>
+        :host {
+            display: none;
+        }
+        </style>
+    </template>
+    <script>
+    Polymer({
+        is: 'system-backup',
+
+        properties: {
+            key: {
+                type: String,
+                value: 'global'
+            },
+
+            data: {
+                type: Object,
+                notify: true
+            },
+
+            mock: {
+                type: Boolean,
+                value: false
+            }
+        },
+
+        observers: ['_restore(mock, key)', '_backup(mock, key, data.*)'],
+
+        _restore: function(mock, key) {
+            if (mock) {
+                return;
+            }
+
+            this.set('data', this.__getStorage().getItem(key + '.json'));
+            this.fire('data-restored', {
+                key: key,
+                data: this.data
+            });
+        },
+
+        _backup: function(mock, key, data) {
+            if (mock) {
+                return;
+            }
+
+            if (data.base) {
+                this.__getStorage().setItem(key + '.json', data.base);
+            }
+        },
+
+        __getStorage: function() {
+            return this._storage || (this._storage = new(require('node-localstorage').JSONStorage)(require('electron').remote.app.getPath('userData')));
+        }
+    });
+    </script>
+</dom-module>

@@ -1,30 +1,256 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-fab-speed-dial/paper-fab-speed-dial.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<!-- TODO: remove -->
+<link rel="import" href="../utils/as-json.html">
+<link rel="import" href="../system-api/system-api.html">
+<link rel="import" href="../display-configuration/display-configuration.html">
+<link rel="import" href="../dialogs/theme-dialog.html">
+
 <dom-module id="terra-pictura-app">
     <template>
-        <style>
+        <style is="custom-style" include="iron-flex iron-flex-alignment iron-positioning">
         :host {
             display: block;
+            @apply --layout-vertical;
+            --paper-fab-background: var(--accent-color);
+            --paper-fab-keyboard-focus-background: var(--dark-accent-color);
+            --paper-tabs-selection-bar-color: var(--accent-color);
+            --paper-tab-ink: white;
+            --paper-fab-speed-dial-orientation: var(--layout-horizontal-reverse);
+            --paper-fab-speed-dial--inner-fab: {
+                margin: 8px 12px;
+                margin-left: 0;
+            }
+            --paper-fab-speed-dial: {
+                position: fixed;
+            }
+            --paper-tooltip: {
+                white-space: nowrap;
+                font-size: .8em;
+            }
+            --paper-tabs: {
+                background-color: var(--primary-color);
+                color: var(--text-primary-color);
+            }
+            --paper-tabs-selection-bar: {
+                border-bottom-width: 4px;
+            }
+            --paper-tabs-content: {
+                @apply(--layout-center-justified);
+            }
+            --paper-tab: {
+                flex: none;
+            }
+        }
+        
+        paper-dropdown-menu {
+            width: 250px;
+        }
+        
+        paper-tabs {
+            min-height: 48px;
+        }
+        
+        /deep/ paper-material {
+            background-color: var(--light-theme-background-color);
+            border-radius: 2px;
+        }
+        
+        /deep/ paper-dropdown-menu iron-dropdown {
+            position: absolute !important;
+            left: 0 !important;
+            top: 8px !important;
+            width: 100%;
+        }
+        
+        /deep/ paper-dropdown-menu iron-dropdown paper-item {
+            white-space: nowrap;
+        }
+        
+        /deep/ paper-dropdown-menu iron-dropdown .dropdown-content {
+            overflow-x: hidden;
+        }
+        
+        paper-icon-button#close {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        
+        .header-main {
+            background-color: var(--primary-color);
+            color: var(--text-primary-color);
+            text-align: center;
+        }
+        
+        #config {
+            /* TODO: remove */
+            background-color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        
+        neon-animated-pages {
+            overflow: hidden;
         }
         </style>
-        <h1>[[title]]</h1>
+
+        <system-api id="system" mock="[[_mock]]"></system-api>
+        <theme-dialog id="theme"></theme-dialog>
+
+        <div class="header-main">
+            <h1>Terra Pictura</h1>
+            <paper-icon-button id="close" icon="icons:close" on-tap="close"></paper-icon-button>
+        </div>
+
+        <div class="flex layout vertical center">
+            <paper-dropdown-menu label="Update frequency">
+                <paper-listbox class="dropdown-content" selected="{{config.frequency}}" attr-for-selected="name">
+                    <template is="dom-repeat" items="[[_updateFrequencies]]">
+                        <paper-item name="[[item.value]]">[[item.title]]</paper-item>
+                    </template>
+                </paper-listbox>
+            </paper-dropdown-menu>
+
+            <paper-radio-group selected="{{config.type}}">
+                <template is="dom-repeat" items="[[_configurationTypes]]">
+                    <paper-radio-button name="[[item.value]]">[[item.title]]</paper-radio-button>
+                </template>
+            </paper-radio-group>
+
+            <paper-tabs class="self-stretch" selected="{{_display}}" attr-for-selected="name">
+                <template is="dom-repeat" items="[[_displays]]">
+                    <paper-tab name="[[item.id]]">[[item.name]]</paper-tab>
+                </template>
+            </paper-tabs>
+            <!-- TODO: remove -->
+            <!-- <as-json data="[[config]]" id="config" ugly></as-json> -->
+            <neon-animated-pages class="flex self-stretch" selected="[[_display]]" attr-for-selected="name" entry-animation="slide-from-top-animation" exit-animation="fade-out-animation">
+                <template is="dom-repeat" items="[[_displays]]">
+                    <display-configuration name="[[item.id]]" display="[[item]]" global-config="{{config}}"></display-configuration>
+                </template>
+            </neon-animated-pages>
+        </div>
+
+        <paper-fab-speed-dial id="speed-dial" opened="{{speedDialOpen}}">
+            <paper-fab icon="menu"></paper-fab>
+            <div class="dropdown-content">
+                <div>
+                    <paper-fab id="fab-check" mini icon="icons:check"></paper-fab>
+                    <paper-tooltip for="fab-check" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Apply and save</paper-tooltip>
+                </div>
+                <div>
+                    <paper-fab id="fab-close" mini icon="icons:close" on-tap="close"></paper-fab>
+                    <paper-tooltip for="fab-close" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Cancel and close</paper-tooltip>
+                </div>
+                <div>
+                    <paper-fab id="fab-search" mini icon="icons:search" on-tap="_identify"></paper-fab>
+                    <paper-tooltip for="fab-search" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Identify displays</paper-tooltip>
+                </div>
+                <div>
+                    <paper-fab id="fab-palette" mini icon="image:palette" on-tap="_editTheme"></paper-fab>
+                    <paper-tooltip for="fab-palette" position="top" animation-delay="0" manual-mode="[[!speedDialOpen]]">Change theme</paper-tooltip>
+                </div>
+            </div>
+        </paper-fab-speed-dial>
     </template>
-
     <script>
-    class MyApplication extends Polymer.Element {
-        static get is() {
-            return 'terra-pictura-app';
-        }
-        static get properties() {
-            return {
-                title: {
-                    type: String,
-                    value: 'Terra Pictura'
-                }
-            };
-        }
-    }
+    Polymer({
+        is: 'terra-pictura-app',
 
-    window.customElements.define(MyApplication.is, MyApplication);
+        ready: function() {
+            this._displays = this.$.system.getDisplays();
+            this._display = this.$.system.getPrimaryDisplay().id
+            this.config = {
+                type: 'same',
+                frequency: '30m',
+                displays: {}
+            };
+            this._displays.forEach(display => this.set('config.displays.' + display.id, {}));
+        },
+
+        close: function() {
+            window.close()
+        },
+
+        _identify: function() {
+            this.$.system.identifyDisplays();
+            this.$['speed-dial'].close();
+        },
+
+        _editTheme: function() {
+            this.$.theme.open();
+            this.$['speed-dial'].close();
+        },
+
+        observers: ['_speedDialOpenChanged(speedDialOpen)'],
+
+        _speedDialOpenChanged: function(open) {
+            if (!open) {
+                Array.prototype.slice.call(this.$['speed-dial'].getElementsByTagName('paper-tooltip')).forEach(tooltip => tooltip.hide());
+            }
+        },
+
+        properties: {
+            title: {
+                type: String,
+                value: 'Terra Pictura'
+            },
+
+            _mock: {
+                type: Boolean,
+                value: typeof require === 'undefined'
+            },
+
+            _updateFrequencies: {
+                type: Array,
+                value: [{
+                    title: 'Every 5 minutes',
+                    value: '5m'
+                }, {
+                    title: 'Every 30 minutes',
+                    value: '30m'
+                }, {
+                    title: 'Every hour',
+                    value: '1h'
+                }, {
+                    title: 'Every day',
+                    value: '1d'
+                }]
+            },
+
+            _configurationTypes: {
+                type: Array,
+                value: [{
+                    title: 'Same for every display',
+                    value: 'same'
+                }, {
+                    title: 'Spanned across all displays',
+                    value: 'unique'
+                }, {
+                    title: 'Different for each display',
+                    value: 'different'
+                }]
+            }
+        }
+    });
     </script>
 </dom-module>

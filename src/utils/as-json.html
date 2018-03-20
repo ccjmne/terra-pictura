@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="as-json">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        </style>
+        <pre id="pre">[[toJSON(data)]]</pre>
+    </template>
+    <script>
+    Polymer({
+        is: 'as-json',
+
+        properties: {
+            data: {},
+            ugly: {
+                type: Boolean,
+                value: false
+            }
+        },
+
+        observers: ['_dataChanged(data.*)'],
+
+        toJSON: function(item) {
+            return JSON.stringify(item, null, this.ugly ? '' : '\t');
+        },
+
+        _dataChanged: function(data) {
+            this.$.pre.innerText = this.toJSON(data.base);
+        }
+    });
+    </script>
+</dom-module>

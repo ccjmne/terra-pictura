@@ -1,0 +1,117 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="system-api-mock.html">
+
+<dom-module id="system-api">
+    <template>
+        <style>
+        :host {
+            display: none;
+        }
+        </style>
+
+        <system-api-mock id="mock" no-warning></system-api-mock>
+    </template>
+    <script>
+    Polymer({
+        is: 'system-api',
+
+        properties: {
+            mock: {
+                type: Boolean,
+                value: false,
+                observer: '_mockChanged'
+            }
+        },
+
+        identifyDisplays: function() {
+            if (this.mock) {
+                return;
+            }
+
+            this.getDisplays().forEach(this._identify.bind(this));
+        },
+
+        getPrimaryDisplay: function() {
+            if (this.mock) {
+                return this.$.mock.getDisplays()[0];
+            }
+
+            return this.__electron.screen.getPrimaryDisplay();
+        },
+
+        getDisplays: function() {
+            const primary = this.getPrimaryDisplay();
+
+            return (function getRawDisplays(mock) {
+                if (mock) {
+                    return this.$.mock.getDisplays();
+                }
+
+                return this.__electron.screen.getAllDisplays();
+            }).bind(this)(this.mock).map(function(display, idx) {
+                display.name = (function(idx) {
+                    switch (idx) {
+                        case 0:
+                            return 'First';
+                        case 1:
+                            return 'Second';
+                        case 2:
+                            return 'Third';
+                        default:
+                            return (idx + 1) + 'th';
+                    }
+                })(idx) + ' display';
+
+                if (display.id === primary.id) {
+                    display.name = display.name + ' (⭐)';
+                }
+
+                return display;
+            });
+        },
+
+        _identify: function(display) {
+            let identifierWindow = new(this.__electron.remote.BrowserWindow)({
+                x: display.bounds.x + display.bounds.width / 2,
+                y: display.bounds.y + display.bounds.height / 2,
+                parent: this.__electron.remote.getCurrentWindow(),
+                modal: true,
+                frame: false,
+                transparent: true,
+                alwaysOnTop: true,
+                fullscreen: true,
+                resizable: false,
+                minimizable: false,
+                show: false
+            });
+
+            identifierWindow.loadURL(require('url').format({
+                pathname: require('path').join(__dirname, 'index.display.html'),
+                protocol: 'file:',
+                slashes: true,
+                query: {
+                    name: display.name
+                }
+            }));
+
+            identifierWindow.on('closed', function() {
+                identifierWindow = null;
+            });
+
+            identifierWindow.once('ready-to-show', () => {
+                identifierWindow.show();
+            });
+        },
+
+        _mockChanged: function(mock) {
+            if (mock) {
+                console.log('Using a mocked system environment');
+                delete this.__electron;
+            } else {
+                this.__electron = require('electron');
+            }
+        }
+    });
+    </script>
+</dom-module>

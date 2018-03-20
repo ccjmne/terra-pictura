@@ -1,0 +1,262 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+
+<link rel="import" href="../../bower_components/vaadin-split-layout/vaadin-split-layout.html">
+
+<link rel="import" href="../display-preview/display-preview.html">
+
+<!-- TODO: remove -->
+<link rel="import" href="../utils/as-json.html">
+
+<dom-module id="display-configuration">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment iron-flex-factors iron-positioning">
+        :host {
+            display: block;
+            height: 100%;
+            @apply --layout-horizontal;
+            --paper-slider-active-color: var(--primary-color);
+            --paper-slider-knob-color: var(--primary-color);
+            --paper-slider-pin-color: var(--primary-color);
+            --vaadin-split-layout-splitter: {
+                fill: var(--primary-color);
+            }
+        }
+        
+        vaadin-split-layout {
+            height: 100%;
+        }
+        
+        vaadin-split-layout > div:not(#splitter) {
+            padding: 20px;
+        }
+        
+        paper-material {
+            padding: 20px;
+            max-width: 400px;
+        }
+        
+        paper-material + paper-material {
+            margin-top: 10px;
+        }
+        
+        paper-dropdown-menu {
+            width: 100%;
+        }
+        
+        .paper-slider-container {
+            @apply --layout-horizontal;
+            @apply --layout-center;
+            padding-top: 5px;
+            margin-bottom: -10px;
+        }
+        
+        .paper-slider-container label {
+            color: var(--light-theme-secondary-color);
+        }
+        
+        .paper-slider-container paper-slider {
+            padding-top: 3px;
+        }
+        </style>
+
+        <vaadin-split-layout class="flex">
+            <div class="flex-2 layout vertical">
+                <paper-radio-group selected="{{config.type}}">
+                    <template is="dom-repeat" items="[[_configurationTypes]]">
+                        <paper-radio-button name="[[item.value]]">[[item.title]]</paper-radio-button>
+                    </template>
+                </paper-radio-group>
+                <display-preview width="[[display.size.width]]" height="[[display.size.height]]"></display-preview>
+                <div class="self-center">
+                    <span>[[display.size.width]] &times; [[display.size.height]]</span>
+                </div>
+            </div>
+
+            <div class="flex layout vertical">
+                <paper-material elevation="1">
+                    <span>Camera focus</span>
+                    <paper-dropdown-menu label="Presets">
+                        <paper-listbox class="dropdown-content" selected="{{config.preset}}" attr-for-selected="name">
+                            <template is="dom-repeat" items="[[_cameraTypes]]">
+                                <paper-item name="[[item.value]]">[[item.title]]</paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <iron-collapse opened="[[_showLongitudeInput(config.type, config.preset)]]">
+                        <paper-input type="number" label="Longitude" value="{{config.long}}"></paper-input>
+                    </iron-collapse>
+                    <iron-collapse opened="[[_showLatitudeInput(config.type, config.preset)]]">
+                        <paper-input type="number" label="Latitude" value="{{config.lat}}"></paper-input>
+                    </iron-collapse>
+                    <iron-collapse opened="[[_is3d(config.type)]]">
+                        <div class="paper-slider-container">
+                            <label class="paper-input-label">Zoom</label>
+                            <paper-slider class="flex" min="0" max="100" value="{{config.zoom}}" pin editable></paper-slider>
+                        </div>
+                    </iron-collapse>
+                </paper-material>
+                <paper-material elevation="1">
+                    <span>Layers configuration</span>
+                    <paper-dropdown-menu label="Base layer">
+                        <paper-listbox class="dropdown-content" selected="{{config.day}}" attr-for-selected="name">
+                            <template is="dom-repeat" items="[[_layers.day]]">
+                                <paper-item name="[[item.value]]">[[item.title]]</paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu label="Night layer">
+                        <paper-listbox class="dropdown-content" selected="{{config.night}}" attr-for-selected="name">
+                            <template is="dom-repeat" items="[[_layers.night]]">
+                                <paper-item name="[[item.value]]">[[item.title]]</paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <iron-collapse opened="[[_is3d(config.type)]]">
+                        <paper-dropdown-menu label="Land depth map">
+                            <paper-listbox class="dropdown-content" selected="{{config.depth}}" attr-for-selected="name">
+                                <template is="dom-repeat" items="[[_layers.depth]]">
+                                    <paper-item name="[[item.value]]">[[item.title]]</paper-item>
+                                </template>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                    </iron-collapse>
+                    <div class="paper-slider-container">
+                        <label class="paper-input-label">Clouds opacity</label>
+                        <paper-slider class="flex" min="0" max="100" value="{{config.clouds}}" pin editable></paper-slider>
+                    </div>
+                </paper-material>
+            </div>
+        </vaadin-split-layout>
+    </template>
+    <script>
+    Polymer({
+        is: 'display-configuration',
+
+        properties: {
+            display: {
+                type: Object
+            },
+
+            globalConfig: {
+                type: Object,
+                notify: true
+            },
+
+            config: {
+                type: Object
+            },
+
+            _layers: {
+                type: Object,
+                value: {
+                    day: [{
+                        title: 'Topographic',
+                        value: 'topographic'
+                    }, {
+                        title: 'Topographic and bathymetric',
+                        value: 'bathymetic'
+                    }],
+                    night: [
+                        /*{
+                            title: 'Land and city lights',
+                            value: 'land`'
+                        }, */
+                        {
+                            title: 'Land and city lights',
+                            value: 'ocean`'
+                        },
+                        /* {
+                            title: 'City lights',
+                            value: 'city'
+                        }, */
+                        {
+                            title: 'Pitch black',
+                            value: 'black'
+                        }
+                    ],
+                    depth: [{
+                        title: 'Flat',
+                        value: 'flat'
+                    }, {
+                        title: 'Bumpy',
+                        value: 'bump'
+                    }]
+                }
+            },
+
+            _cameraTypes: {
+                type: Array,
+                value: [{
+                        title: 'Custom coordinates',
+                        value: 'custom'
+                    }, {
+                        title: 'Current location',
+                        value: 'current_location'
+                    }
+                    /*, {
+                        title: 'Specific location',
+                        value: 'specific_location'
+                    }*/
+                    , {
+                        title: 'Noon',
+                        value: 'noon'
+                    }, {
+                        title: 'Midnight',
+                        value: 'midnight'
+                    }, {
+                        title: 'Sunrise',
+                        value: 'sunrise'
+                    }, {
+                        title: 'Sunset',
+                        value: 'sunset'
+                    }
+                ]
+            },
+
+            _configurationTypes: {
+                type: Array,
+                value: [{
+                    title: 'Equirectangular projection',
+                    value: 'equirectangular'
+                }, {
+                    title: '3-dimentional representation',
+                    value: '3d'
+                }]
+            }
+        },
+
+        observers: ['_globalConfigChanged(globalConfig, display)', '_notifyUpdate(config.*)'],
+
+        _showLongitudeInput: function(configType, cameraPreset) {
+            return cameraPreset === 'custom';
+        },
+
+        _showLatitudeInput: function(configType, cameraPreset) {
+            return configType === '3d' && cameraPreset !== 'current_location' && cameraPreset !== 'specific_location';
+        },
+
+        _is3d: function(configType) {
+            return configType === '3d';
+        },
+
+        _globalConfigChanged: function(globalConfig, display) {
+            this.config = globalConfig.displays[display.id];
+        },
+
+        _notifyUpdate: function(config) {
+            this.set('globalConfig.updateCounter', (this.globalConfig.updateCounter || 0) + 1);
+        }
+    });
+    </script>
+</dom-module>
